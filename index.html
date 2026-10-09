@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>键影同步 — 一个操作，多个窗口一起动</title>
+  <meta name="description" content="键影同步是 Windows 上的多窗口键鼠同步工具。窗口化游戏可以五开、十开，自动绑定，一键钓鱼和一键跟随。" />
+  <style>
+    :root {
+      --bg: #0c0e14;
+      --bg-2: #141824;
+      --card: #1a1f2e;
+      --line: rgba(255, 255, 255, 0.08);
+      --text: #f4f6fb;
+      --muted: #9aa3b8;
+      --blue: #4c8dff;
+      --blue-2: #7eb0ff;
+      --gold: #f0b429;
+      --gold-ink: #1a1404;
+      --purple: #b388ff;
+      --green: #2fce8b;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: "Microsoft YaHei UI", "PingFang SC", "Segoe UI", sans-serif;
+      background:
+        radial-gradient(900px 480px at 85% -10%, rgba(76, 141, 255, 0.28), transparent 60%),
+        radial-gradient(700px 420px at -10% 20%, rgba(179, 136, 255, 0.16), transparent 55%),
+        var(--bg);
+      line-height: 1.6;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    .wrap { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(16px);
+      background: rgba(12, 14, 20, 0.72);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 88px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; letter-spacing: 0.04em; font-size: 18px; }
+    .brand img { width: 56px; height: 56px; border-radius: 14px; }
+    .nav-links { display: flex; gap: 22px; color: var(--muted); font-size: 14px; }
+    .nav-links a:hover { color: var(--text); }
+
+    .hero { padding: 72px 0 36px; display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 48px; align-items: center; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(76, 141, 255, 0.12);
+      color: var(--blue-2);
+      font-size: 13px;
+      margin-bottom: 18px;
+    }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 4px rgba(47, 206, 139, 0.15); }
+    h1 { margin: 0 0 16px; font-size: 56px; line-height: 1.12; letter-spacing: -0.03em; }
+    h1 span { color: var(--blue-2); }
+    .lead { margin: 0 0 28px; color: var(--muted); font-size: 18px; max-width: 520px; }
+    .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 0 18px;
+      border-radius: 12px;
+      font-weight: 700;
+    }
+    .btn-primary { background: var(--blue); color: white; }
+    .btn-ghost { border: 1px solid var(--line); color: var(--text); background: rgba(255,255,255,0.03); }
+
+    .stage {
+      background: linear-gradient(180deg, #1c2333, #121722);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+    .stage-top { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; color: var(--muted); font-size: 12px; }
+    .win-dot { width: 9px; height: 9px; border-radius: 50%; }
+    .stage-body { display: grid; grid-template-columns: 1.4fr 0.7fr; gap: 10px; min-height: 280px; }
+    .main-view, .slot {
+      border-radius: 14px;
+      background: #0b0d12;
+      border: 1px solid rgba(255,255,255,0.06);
+      position: relative;
+      overflow: hidden;
+    }
+    .main-view { padding: 16px; display: flex; flex-direction: column; justify-content: flex-end; min-height: 280px; }
+    .glow {
+      position: absolute;
+      inset: auto -20% 20% -10%;
+      height: 160px;
+      background: radial-gradient(circle, rgba(76,141,255,0.45), transparent 68%);
+      filter: blur(8px);
+      animation: breathe 3.6s ease-in-out infinite;
+    }
+    .kbd { display: flex; gap: 6px; position: relative; }
+    .key {
+      min-width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: #232a3b;
+      border: 1px solid rgba(255,255,255,0.08);
+      display: grid;
+      place-items: center;
+      font-size: 13px;
+      font-weight: 700;
+      animation: tap 3.6s infinite;
+    }
+    .key:nth-child(2) { animation-delay: 0.45s; }
+    .key:nth-child(3) { animation-delay: 0.9s; }
+    .key:nth-child(4) { animation-delay: 1.35s; }
+    .key:nth-child(5) { animation-delay: 1.8s; }
+    .slots { display: grid; gap: 8px; }
+    .slot {
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
+      animation: echo 3.6s infinite;
+    }
+    .slot b { color: var(--text); font-weight: 600; }
+    .pip { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: blink 3.6s infinite; }
+    .pool { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--line); }
+    .pool-label { margin-bottom: 6px; color: var(--muted); font-size: 11px; }
+    .pool-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
+    .pool-card {
+      min-height: 0;
+      padding: 4px;
+      border-radius: 7px;
+      background: #0b0d12;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .pool-card.live { border-color: rgba(76, 141, 255, 0.75); }
+    .pool-thumb {
+      height: 12px;
+      border-radius: 4px;
+      margin-bottom: 3px;
+      background: linear-gradient(180deg, #243044, #121722);
+    }
+    .pool-card b {
+      display: block;
+      color: var(--text);
+      font-size: 10px;
+      font-weight: 600;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    .strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 18px auto 10px; align-items: stretch; }
+    .strip article {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      min-height: 124px;
+      padding: 22px 18px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--line);
+    }
+    .strip strong { display: block; font-size: 28px; letter-spacing: -0.03em; line-height: 1.2; }
+    .strip span { display: block; margin-top: 6px; max-width: 16em; color: var(--muted); font-size: 13px; line-height: 1.5; }
+
+    @keyframes breathe {
+      0%, 100% { opacity: 0.45; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.08); }
+    }
+    @keyframes tap {
+      0%, 10%, 100% { background: #232a3b; color: var(--text); transform: translateY(0); }
+      2%, 7% { background: var(--blue); color: white; transform: translateY(2px); }
+    }
+    @keyframes echo {
+      0%, 1.5%, 8%, 13.5%, 20.5%, 26%, 33%, 38.5%, 45.5%, 51%, 58%, 100% {
+        border-color: rgba(255,255,255,0.06);
+        background: #0b0d12;
+      }
+      2%, 7%, 14.5%, 19.5%, 27%, 32%, 39.5%, 44.5%, 52%, 57% {
+        border-color: var(--blue);
+        background: #14233c;
+      }
+    }
+    @keyframes blink {
+      0%, 1.5%, 8%, 13.5%, 20.5%, 26%, 33%, 38.5%, 45.5%, 51%, 58%, 100% { opacity: 0.45; box-shadow: none; }
+      2%, 7%, 14.5%, 19.5%, 27%, 32%, 39.5%, 44.5%, 52%, 57% { opacity: 1; box-shadow: 0 0 0 4px rgba(47, 206, 139, 0.18); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .glow, .key, .slot, .pip { animation: none; }
+    }
+
+    section { padding: 72px 0; }
+    h2 { margin: 0 0 10px; font-size: 34px; letter-spacing: -0.03em; }
+    .section-lead { margin: 0 0 28px; color: var(--muted); max-width: 640px; }
+
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 22px;
+      min-height: 180px;
+    }
+    .mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 14px;
+      font-weight: 800;
+      background: rgba(76, 141, 255, 0.14);
+      color: var(--blue-2);
+    }
+    .card h3 { margin: 0 0 8px; font-size: 18px; }
+    .card p { margin: 0; color: var(--muted); font-size: 14px; }
+    .card.gold .mark { background: rgba(240, 180, 41, 0.16); color: var(--gold); }
+    .card.purple .mark { background: rgba(179, 136, 255, 0.16); color: var(--purple); }
+    .card.green .mark { background: rgba(47, 206, 139, 0.14); color: var(--green); }
+
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .step { padding: 22px; border-radius: 18px; background: linear-gradient(180deg, rgba(76,141,255,0.1), rgba(255,255,255,0.02)); border: 1px solid var(--line); }
+    .num { color: var(--blue-2); font-weight: 800; font-size: 13px; letter-spacing: 0.08em; }
+    .step h3 { margin: 8px 0; }
+    .step p { margin: 0; color: var(--muted); font-size: 14px; }
+
+    .plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .plan {
+      border-radius: 20px;
+      padding: 24px;
+      background: var(--card);
+      border: 1px solid var(--line);
+    }
+    .plan.vip { border-color: rgba(240, 180, 41, 0.55); box-shadow: 0 0 0 1px rgba(240, 180, 41, 0.15); }
+    .plan.svip { border-color: rgba(179, 136, 255, 0.55); }
+    .tag { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; margin-bottom: 12px; }
+    .tag.normal { background: #2a3142; color: #c5ccda; }
+    .tag.vip { background: var(--gold); color: var(--gold-ink); }
+    .tag.svip { background: #2a2140; color: var(--purple); }
+    .plan h3 { margin: 0 0 6px; font-size: 26px; }
+    .plan ul { margin: 16px 0 0; padding: 0; list-style: none; color: var(--muted); font-size: 14px; }
+    .plan li { padding: 7px 0; border-top: 1px solid var(--line); }
+
+    .more { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 18px; align-items: stretch; }
+    .list { display: grid; gap: 10px; }
+    .item { display: flex; gap: 12px; padding: 14px 16px; border-radius: 14px; background: rgba(255,255,255,0.03); border: 1px solid var(--line); }
+    .item b { display: block; }
+    .item span { color: var(--muted); font-size: 13px; }
+    .note {
+      border-radius: 20px;
+      padding: 28px;
+      background:
+        radial-gradient(400px 180px at 100% 0%, rgba(240,180,41,0.2), transparent 60%),
+        #171c2a;
+      border: 1px solid var(--line);
+    }
+    .note h3 { margin: 0 0 8px; font-size: 24px; }
+    .note p { margin: 0; color: var(--muted); }
+
+    footer { padding: 28px 0 40px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); }
+
+    @media (max-width: 860px) {
+      h1 { font-size: 38px; }
+      .hero, .grid, .steps, .plans, .more, .strip { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+      .stage-body { grid-template-columns: 1fr; }
+      section { padding: 48px 0; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap nav">
+      <a class="brand" href="#top"><img src="logo.png" alt="" />键影同步</a>
+      <nav class="nav-links">
+        <a href="#advantages">优点</a>
+        <a href="#how">怎么用</a>
+        <a href="#plans">套餐</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <div class="wrap hero">
+      <div>
+        <div class="eyebrow"><i class="dot"></i>Windows 多窗口同步</div>
+        <h1>一个操作，<span>多个窗口一起动</span></h1>
+        <p class="lead">键影同步把键盘和鼠标按键同步到已经打开的窗口化游戏。主窗口在左边直接操作，其余窗口缩在右边，点一下就能换过去。</p>
+        <div class="actions">
+          <a class="btn btn-primary" href="#advantages">看看它好在哪</a>
+          <a class="btn btn-ghost" href="#plans">试用 / 五开 / 十开</a>
+        </div>
+      </div>
+      <div class="stage" aria-hidden="true">
+        <div class="stage-top">
+          <i class="win-dot" style="background:#ff5d73"></i>
+          <i class="win-dot" style="background:#f0b429"></i>
+          <i class="win-dot" style="background:#2fce8b"></i>
+          <span>键影同步</span>
+        </div>
+        <div class="stage-body">
+          <div class="main-view">
+            <div class="glow"></div>
+            <div class="kbd">
+              <div class="key">F1</div>
+              <div class="key">F2</div>
+              <div class="key">F3</div>
+              <div class="key">F4</div>
+            </div>
+          </div>
+          <div class="slots">
+            <div class="slot"><i class="pip"></i><span><b>1 主窗口</b><br />正在操作</span></div>
+            <div class="slot"><i class="pip"></i><span><b>2</b> 同步中</span></div>
+            <div class="slot"><i class="pip"></i><span><b>3</b> 同步中</span></div>
+            <div class="slot"><i class="pip"></i><span><b>4</b> 同步中</span></div>
+            <div class="slot"><i class="pip"></i><span><b>5</b> 同步中</span></div>
+          </div>
+        </div>
+        <div class="pool">
+          <div class="pool-label">窗口池</div>
+          <div class="pool-grid">
+            <div class="pool-card live"><div class="pool-thumb"></div><b>窗口 1</b></div>
+            <div class="pool-card"><div class="pool-thumb"></div><b>窗口 2</b></div>
+            <div class="pool-card"><div class="pool-thumb"></div><b>窗口 3</b></div>
+            <div class="pool-card"><div class="pool-thumb"></div><b>窗口 4</b></div>
+            <div class="pool-card"><div class="pool-thumb"></div><b>窗口 5</b></div>
+            <div class="pool-card"><div class="pool-thumb"></div><b>窗口 6</b></div>
+            <div class="pool-card"><div class="pool-thumb"></div><b>窗口 7</b></div>
+            <div class="pool-card"><div class="pool-thumb"></div><b>窗口 8</b></div>
+            <div class="pool-card"><div class="pool-thumb"></div><b>窗口 9</b></div>
+            <div class="pool-card"><div class="pool-thumb"></div><b>窗口 10</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrap strip">
+      <article><strong>5 开</strong><span>VIP，一组五个窗口一起同步</span></article>
+      <article><strong>10 开</strong><span>SVIP，两组各五个，点组名切换</span></article>
+      <article><strong>2 分钟</strong><span>微信扫码付款后，会员信息自动生效</span></article>
+    </div>
+
+    <section id="advantages">
+      <div class="wrap">
+        <h2>为什么用键影同步</h2>
+        <p class="section-lead">少在窗口之间来回切，常用动作一次做完。下面这些都是程序里已经有的能力。</p>
+        <div class="grid">
+          <article class="card">
+            <div class="mark">键</div>
+            <h3>一次按键，多窗齐动</h3>
+            <p>勾选同步键盘或同步鼠标按键。主窗口上的操作会发到同组已绑定的其他窗口，两项可以分开开。</p>
+          </article>
+          <article class="card">
+            <div class="mark">看</div>
+            <h3>每个窗口都看得见</h3>
+            <p>左边是正在玩的大画面，右边是小画面。点小画面，那个窗口会换到左边，不用在任务栏里找。</p>
+          </article>
+          <article class="card gold">
+            <div class="mark">绑</div>
+            <h3>筛选之后自动绑定</h3>
+            <p>输入窗口标题，列表只留对应游戏。自动绑定按卡片顺序放进槽位，顺序不对可以拖拽再绑一次。</p>
+          </article>
+          <article class="card green">
+            <div class="mark">序</div>
+            <h3>窗口池可以拖拽排序</h3>
+            <p>按住窗口池里的卡片拖动，就能调整先后顺序。自动绑定时按这个顺序放进槽位。</p>
+          </article>
+          <article class="card purple">
+            <div class="mark">组</div>
+            <h3>五开和十开分开</h3>
+            <p>试用可以预览 1 个窗口。VIP 五开一组。SVIP 十开分成两组，每组五个，互不搅在一起。</p>
+          </article>
+          <article class="card">
+            <div class="mark">续</div>
+            <h3>续费不用干等客服</h3>
+            <p>个人中心扫码选择套餐。付款之后大约 2 分钟内，程序会自己刷新等级和到期时间。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="how">
+      <div class="wrap">
+        <h2>三步开始</h2>
+        <p class="section-lead">游戏请先改成窗口化，不要最小化。同步器认的是真正开着的窗口。</p>
+        <div class="steps">
+          <article class="step">
+            <div class="num">01</div>
+            <h3>打开游戏</h3>
+            <p>把要一起玩的窗口都打开。标题里能区分的，就在筛选框里输入关键字。</p>
+          </article>
+          <article class="step">
+            <div class="num">02</div>
+            <h3>刷新并绑定</h3>
+            <p>刷新列表后自动绑定，或从下面的卡片逐个放进槽位。拖拽可以调整先后顺序。</p>
+          </article>
+          <article class="step">
+            <div class="num">03</div>
+            <h3>开始同步</h3>
+            <p>勾上要同步的键盘或鼠标按键，再点开始同步。左边操作，右边一起动。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="plans">
+      <div class="wrap">
+        <h2>按开数选套餐</h2>
+        <p class="section-lead">等级决定能绑多少窗口。到期后如果没有下一段，会回到普通试用。</p>
+        <div class="plans">
+          <article class="plan">
+            <span class="tag normal">试用</span>
+            <h3>1 个窗口</h3>
+            <ul>
+              <li>可以预览画面</li>
+              <li>不能多开同步</li>
+              <li>用来先看清怎么绑定</li>
+            </ul>
+          </article>
+          <article class="plan vip">
+            <span class="tag vip">VIP 五开</span>
+            <h3>5 个窗口</h3>
+            <ul>
+              <li>一组五个槽位</li>
+              <li>键盘、鼠标按键同步</li>
+              <li>一键钓鱼、一键跟随</li>
+            </ul>
+          </article>
+          <article class="plan svip">
+            <span class="tag svip">SVIP 十开</span>
+            <h3>10 个窗口</h3>
+            <ul>
+              <li>两组，每组五个</li>
+              <li>点组名切换当前组</li>
+              <li>两组互不影响</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap more">
+        <div class="list">
+          <div class="item"><div><b>手机号登录</b><span>24 小时内再次打开会自动进入，也可以记住密码。密码按当前 Windows 用户加密保存在本机。</span></div></div>
+          <div class="item"><div><b>账号只留一处在线</b><span>别处登录会把这边挤下线，并提醒尽快检查密码。</span></div></div>
+          <div class="item"><div><b>客服就在程序里</b><span>可以发文字和图片。客服回复后，图标上会出现红点，点开就消失。</span></div></div>
+          <div class="item"><div><b>窗口可以置顶</b><span>同步器自己保持在前台，避免被游戏窗口盖住。位置不合适时可以还原。</span></div></div>
+        </div>
+        <aside class="note">
+          <h3>适合窗口化多开</h3>
+          <p>先把游戏改成窗口化，再刷新列表。标题里带游戏名时，用筛选只留下要管理的那些窗口，浏览器和其他程序不会被一起绑进去。</p>
+          <p style="margin-top:16px">安装之后用手机号登录。想升级时，打开个人中心右上角的「续费升级」，扫码选套餐即可。</p>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">键影同步 · 多窗口键鼠同步</div>
+  </footer>
+</body>
+</html>
