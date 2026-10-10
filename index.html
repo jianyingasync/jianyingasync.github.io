@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>键影同步 — 一个操作，多个窗口一起动</title>
-  <meta name="description" content="键影同步是 Windows 上的多窗口键鼠同步工具。窗口化游戏可以五开、十开，自动绑定，一键钓鱼和一键跟随。" />
+  <meta name="description" content="键影同步是 Windows 上的多窗口键鼠同步工具。注册即送 2 天 SVIP 十开，可五开、十开，自动绑定，一键跟随和一键钓鱼。客服服务时间 8：00-16：30。" />
   <style>
     :root {
       --bg: #0c0e14;
@@ -85,7 +85,13 @@
       font-weight: 700;
     }
     .btn-primary { background: var(--blue); color: white; }
+    .btn-primary:hover { filter: brightness(1.08); }
     .btn-ghost { border: 1px solid var(--line); color: var(--text); background: rgba(255,255,255,0.03); }
+    .btn-ghost:hover { border-color: rgba(255,255,255,0.18); background: rgba(255,255,255,0.06); }
+    .btn:focus-visible, .nav-links a:focus-visible, summary:focus-visible {
+      outline: 2px solid var(--blue-2);
+      outline-offset: 3px;
+    }
 
     .stage {
       background: linear-gradient(180deg, #1c2333, #121722);
@@ -169,6 +175,24 @@
       white-space: nowrap;
     }
 
+    .pledge {
+      margin: 8px auto 4px;
+      padding: 36px 28px;
+      border-radius: 22px;
+      text-align: center;
+      background:
+        radial-gradient(520px 120px at 50% 0%, rgba(47, 206, 139, 0.16), transparent 70%),
+        rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(47, 206, 139, 0.28);
+    }
+    .pledge p {
+      margin: 0;
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.45;
+    }
+
     .strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 18px auto 10px; align-items: stretch; }
     .strip article {
       display: flex;
@@ -211,7 +235,7 @@
       .glow, .key, .slot, .pip { animation: none; }
     }
 
-    section { padding: 72px 0; }
+    section { padding: 72px 0; scroll-margin-top: 88px; }
     h2 { margin: 0 0 10px; font-size: 34px; letter-spacing: -0.03em; }
     .section-lead { margin: 0 0 28px; color: var(--muted); max-width: 640px; }
 
@@ -240,7 +264,7 @@
     .card.purple .mark { background: rgba(179, 136, 255, 0.16); color: var(--purple); }
     .card.green .mark { background: rgba(47, 206, 139, 0.14); color: var(--green); }
 
-    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
     .step { padding: 22px; border-radius: 18px; background: linear-gradient(180deg, rgba(76,141,255,0.1), rgba(255,255,255,0.02)); border: 1px solid var(--line); }
     .num { color: var(--blue-2); font-weight: 800; font-size: 13px; letter-spacing: 0.08em; }
     .step h3 { margin: 8px 0; }
@@ -279,14 +303,79 @@
     .note h3 { margin: 0 0 8px; font-size: 24px; }
     .note p { margin: 0; color: var(--muted); }
 
+    .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px; }
+
+    .faq { display: grid; gap: 10px; }
+    details {
+      border-radius: 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--line);
+      padding: 0 16px;
+    }
+    summary {
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      font-weight: 700;
+      list-style: none;
+    }
+    summary::-webkit-details-marker { display: none; }
+    details p { margin: 0 0 14px; color: var(--muted); font-size: 14px; }
+
+    .support {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 28px;
+      align-items: center;
+    }
+    .hours {
+      display: inline-block;
+      margin: 0 0 14px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(47, 206, 139, 0.12);
+      color: var(--green);
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .qr {
+      justify-self: end;
+      width: min(280px, 100%);
+      margin: 0;
+      padding: 16px 16px 12px;
+      border-radius: 20px;
+      background: #fff;
+      color: #5c6570;
+      text-align: center;
+    }
+    .qr img { width: 100%; height: auto; border-radius: 8px; }
+
+    .closing {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 28px;
+      border-radius: 20px;
+      background: linear-gradient(90deg, rgba(76,141,255,0.16), rgba(179,136,255,0.1));
+      border: 1px solid var(--line);
+    }
+    .closing h2 { margin: 0 0 6px; font-size: 28px; }
+    .closing p { margin: 0; color: var(--muted); }
+
     footer { padding: 28px 0 40px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); }
 
     @media (max-width: 860px) {
       h1 { font-size: 38px; }
-      .hero, .grid, .steps, .plans, .more, .strip { grid-template-columns: 1fr; }
-      .nav-links { display: none; }
+      .pledge p { font-size: 22px; }
+      .nav { height: auto; padding: 14px 0; flex-wrap: wrap; gap: 10px 16px; }
+      .nav-links { flex-wrap: wrap; gap: 12px 16px; }
+      .hero, .grid, .steps, .plans, .more, .strip, .pair, .support, .closing { grid-template-columns: 1fr; }
+      .qr { justify-self: center; }
+      .closing { text-align: center; flex-direction: column; }
       .stage-body { grid-template-columns: 1fr; }
-      section { padding: 48px 0; }
+      section { padding: 48px 0; scroll-margin-top: 128px; }
     }
   </style>
 </head>
@@ -298,7 +387,8 @@
         <a href="#advantages">优点</a>
         <a href="#how">怎么用</a>
         <a href="#plans">套餐</a>
-        <a href="http://180.184.168.232:18888/download/KeyMirrorSetup.exe">下载</a>
+        <a href="#support">客服</a>
+        <a href="download/KeyMirrorSetup.exe">下载</a>
       </nav>
     </div>
   </header>
@@ -310,9 +400,9 @@
         <h1>一个操作，<span>多个窗口一起动</span></h1>
         <p class="lead">键影同步把键盘和鼠标按键同步到已经打开的窗口化游戏。主窗口在左边直接操作，其余窗口缩在右边，点一下就能换过去。</p>
         <div class="actions">
-          <a class="btn btn-primary" href="http://180.184.168.232:18888/download/KeyMirrorSetup.exe">下载 Windows 安装包</a>
+          <a class="btn btn-primary" href="download/KeyMirrorSetup.exe">下载 Windows 安装包</a>
           <a class="btn btn-ghost" href="#advantages">看看它好在哪</a>
-          <a class="btn btn-ghost" href="#plans">试用 / 五开 / 十开</a>
+          <a class="btn btn-ghost" href="#plans">两日 SVIP 试用</a>
         </div>
       </div>
       <div class="stage" aria-hidden="true">
@@ -358,10 +448,16 @@
       </div>
     </div>
 
+    <div class="wrap">
+      <div class="pledge">
+        <p>非外挂软件，不会干扰游戏正常公平性。</p>
+      </div>
+    </div>
+
     <div class="wrap strip">
+      <article><strong>2 天</strong><span>注册即送 SVIP 十开，今天和明天</span></article>
       <article><strong>5 开</strong><span>VIP，一组五个窗口一起同步</span></article>
       <article><strong>10 开</strong><span>SVIP，两组各五个，点组名切换</span></article>
-      <article><strong>2 分钟</strong><span>微信扫码付款后，会员信息自动生效</span></article>
     </div>
 
     <section id="advantages">
@@ -382,22 +478,32 @@
           <article class="card gold">
             <div class="mark">绑</div>
             <h3>筛选之后自动绑定</h3>
-            <p>输入窗口标题，列表只留对应游戏。自动绑定按卡片顺序放进槽位，顺序不对可以拖拽再绑一次。</p>
+            <p>输入游戏名，列表只留对应窗口。点「自动绑定」按拖拽顺序放入槽位，也可以双击窗口池里的卡片手动绑定。</p>
           </article>
           <article class="card green">
             <div class="mark">序</div>
-            <h3>窗口池可以拖拽排序</h3>
-            <p>按住窗口池里的卡片拖动，就能调整先后顺序。自动绑定时按这个顺序放进槽位。</p>
+            <h3>排序，再添加备注</h3>
+            <p>按住窗口池里的卡片拖动，调整先后。需要时给窗口添加备注，方便认出是哪个角色。</p>
           </article>
           <article class="card purple">
             <div class="mark">组</div>
             <h3>五开和十开分开</h3>
-            <p>试用可以预览 1 个窗口。VIP 五开一组。SVIP 十开分成两组，每组五个，互不搅在一起。</p>
+            <p>新注册送 2 天 SVIP，十开两组。试用结束后没有续费，会变成普通，只能预览 1 个窗口。VIP 五开一组，付费 SVIP 也是十开两组。</p>
           </article>
           <article class="card">
             <div class="mark">续</div>
             <h3>续费不用干等客服</h3>
             <p>个人中心扫码选择套餐。付款之后大约 2 分钟内，程序会自己刷新等级和到期时间。</p>
+          </article>
+          <article class="card green">
+            <div class="mark">跟</div>
+            <h3>一键跟随</h3>
+            <p>同步开始后，第一次会记下游戏里的跟随键，并显示在按钮上。之后再点，当前组槽位 2 到 5 会点中队长头像并按下这个键。右键按钮可清除记录。</p>
+          </article>
+          <article class="card purple">
+            <div class="mark">钓</div>
+            <h3>一键钓鱼</h3>
+            <p>只有筛选里包含「飞飞」时才出现。先让角色进入钓鱼界面，再点「一键钓鱼」。当前组已绑定的窗口会持续按方向键下，再点一次停止。</p>
           </article>
         </div>
       </div>
@@ -405,23 +511,40 @@
 
     <section id="how">
       <div class="wrap">
-        <h2>三步开始</h2>
-        <p class="section-lead">游戏请先改成窗口化，不要最小化。同步器认的是真正开着的窗口。</p>
+        <h2>四步开始</h2>
+        <p class="section-lead">第一次打开会有一层引导。请把游戏改成窗口化，不要最小化。</p>
         <div class="steps">
           <article class="step">
             <div class="num">01</div>
-            <h3>打开游戏</h3>
-            <p>把要一起玩的窗口都打开。标题里能区分的，就在筛选框里输入关键字。</p>
+            <h3>筛选窗口</h3>
+            <p>先输入游戏名，筛选过滤窗口。标题对得上的才会留在列表里。</p>
           </article>
           <article class="step">
             <div class="num">02</div>
-            <h3>刷新并绑定</h3>
-            <p>刷新列表后自动绑定，或从下面的卡片逐个放进槽位。拖拽可以调整先后顺序。</p>
+            <h3>排序和备注</h3>
+            <p>在窗口池里拖拽排序，并给窗口添加备注，方便对上角色。</p>
           </article>
           <article class="step">
             <div class="num">03</div>
+            <h3>绑定槽位</h3>
+            <p>点「自动绑定」，按拖拽顺序放入槽位。也可以双击窗口池里的卡片手动绑定。</p>
+          </article>
+          <article class="step">
+            <div class="num">04</div>
             <h3>开始同步</h3>
-            <p>勾上要同步的键盘或鼠标按键，再点开始同步。左边操作，右边一起动。</p>
+            <p>会将当前组 1 号槽位的按键，同步到槽位 2 至 5 的窗口里，并可以随时取消同步。</p>
+          </article>
+        </div>
+        <div class="pair">
+          <article class="step">
+            <div class="num">跟随</div>
+            <h3>一键跟随</h3>
+            <p>同步开始后，第一次点「一键跟随」会记下游戏里的跟随键，并显示在按钮上，例如一键跟随(F4)。之后再点，会让当前组槽位 2 到 5 点中队长头像，并按下这个键。右键按钮可清除记录。</p>
+          </article>
+          <article class="step">
+            <div class="num">钓鱼</div>
+            <h3>一键钓鱼</h3>
+            <p>这是新飞飞专用，只有筛选里包含「飞飞」时才出现。先让角色进入钓鱼界面，再点「一键钓鱼」。会替当前组已绑定的窗口持续按方向键下，再点一次停止。</p>
           </article>
         </div>
       </div>
@@ -430,15 +553,15 @@
     <section id="plans">
       <div class="wrap">
         <h2>按开数选套餐</h2>
-        <p class="section-lead">等级决定能绑多少窗口。到期后如果没有下一段，会回到普通试用。</p>
+        <p class="section-lead">新用户注册即送 2 天 SVIP。试用结束后如果没有续费，会变成普通用户，只能预览 1 个窗口。</p>
         <div class="plans">
-          <article class="plan">
-            <span class="tag normal">试用</span>
-            <h3>1 个窗口</h3>
+          <article class="plan svip">
+            <span class="tag svip">SVIP 两日试用</span>
+            <h3>注册即送</h3>
             <ul>
-              <li>可以预览画面</li>
-              <li>不能多开同步</li>
-              <li>用来先看清怎么绑定</li>
+              <li>今天和明天，共 2 天</li>
+              <li>十开，两组各五个</li>
+              <li>到期后到个人中心续费</li>
             </ul>
           </article>
           <article class="plan vip">
@@ -466,22 +589,76 @@
     <section>
       <div class="wrap more">
         <div class="list">
-          <div class="item"><div><b>手机号登录</b><span>24 小时内再次打开会自动进入，也可以记住密码。密码按当前 Windows 用户加密保存在本机。</span></div></div>
-          <div class="item"><div><b>账号只留一处在线</b><span>别处登录会把这边挤下线，并提醒尽快检查密码。</span></div></div>
+          <div class="item"><div><b>手机号登录</b><span>唯一性和安全性，用手机号注册或登录。勾选记住密码后，下次不用重填。</span></div></div>
+          <div class="item"><div><b>账号只留一处在线</b><span>同一个账号同时只在一处在线。如果在别的地方登录，这边会退出，并提醒你注意账号安全。</span></div></div>
           <div class="item"><div><b>客服就在程序里</b><span>可以发文字和图片。客服回复后，图标上会出现红点，点开就消失。</span></div></div>
-          <div class="item"><div><b>窗口可以置顶</b><span>同步器自己保持在前台，避免被游戏窗口盖住。位置不合适时可以还原。</span></div></div>
+          <div class="item"><div><b>窗口可以置顶</b><span>需要时可以让同步器留在最前面，避免被游戏挡住。游戏窗口位置不合适时，可以一键还原。</span></div></div>
         </div>
         <aside class="note">
           <h3>适合窗口化多开</h3>
           <p>先把游戏改成窗口化，再刷新列表。标题里带游戏名时，用筛选只留下要管理的那些窗口，浏览器和其他程序不会被一起绑进去。</p>
-          <p style="margin-top:16px">安装之后用手机号登录。想升级时，打开个人中心右上角的「续费升级」，扫码选套餐即可。</p>
+          <p style="margin-top:16px">安装之后用手机号注册，即送 2 天 SVIP 试用。想继续用，打开个人中心右上角的「续费升级」，扫码选套餐即可。</p>
         </aside>
+      </div>
+    </section>
+
+    <section id="faq">
+      <div class="wrap">
+        <h2>常见问题</h2>
+        <p class="section-lead">试用、开数和客服时间，按程序里的实际规则说明。</p>
+        <div class="faq">
+          <details>
+            <summary>试用结束后还能登录吗？</summary>
+            <p>可以。试用结束且没有续费时，账号会变成普通，只能预览 1 个窗口。打开个人中心右上角的「续费升级」，扫码选套餐即可。</p>
+          </details>
+          <details>
+            <summary>普通、VIP、SVIP 有什么差别？</summary>
+            <p>普通只能预览 1 个窗口。VIP 是五开，一组五个槽位。SVIP 是十开，两组各五个，点组名切换，两组互不影响。</p>
+          </details>
+          <details>
+            <summary>付款之后多久生效？</summary>
+            <p>微信扫码付款后，大约 2 分钟内，程序会自己刷新等级和到期时间。</p>
+          </details>
+          <details>
+            <summary>一键钓鱼为什么有时看不到？</summary>
+            <p>只有筛选框里包含「飞飞」时才会出现。先让角色进入钓鱼界面，再点「一键钓鱼」。</p>
+          </details>
+          <details>
+            <summary>客服什么时候在？</summary>
+            <p>客服服务时间：8：00-16：30。程序里可以发文字和图片。也可以扫下面的二维码，主动加客服好友。</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section id="support">
+      <div class="wrap support">
+        <div>
+          <h2>联系客服</h2>
+          <p class="hours">客服服务时间：8：00-16：30</p>
+          <p class="section-lead">可以发文字和图片。客服回复后，图标上会出现红点，点开就消失。也可以扫码主动加客服好友。</p>
+        </div>
+        <figure class="qr">
+          <img src="haoyou.png" alt="键影同步客服微信二维码，扫二维码添加好友" width="248" height="360" />
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <div class="closing">
+          <div>
+            <h2>安装后用手机号注册</h2>
+            <p>即送 2 天 SVIP 试用。今天和明天，十开两组。</p>
+          </div>
+          <a class="btn btn-primary" href="download/KeyMirrorSetup.exe">下载 Windows 安装包</a>
+        </div>
       </div>
     </section>
   </main>
 
   <footer>
-    <div class="wrap">键影同步 · 多窗口键鼠同步</div>
+    <div class="wrap">键影同步 · 多窗口键鼠同步 · 客服服务时间 8：00-16：30</div>
   </footer>
 </body>
 </html>
