@@ -233,11 +233,34 @@
     }
     @media (prefers-reduced-motion: reduce) {
       .glow, .key, .slot, .pip { animation: none; }
+      .pointer-glow, .scroll-bar { display: none; }
+      .hero > div:first-child > *, .stage { animation: none; }
     }
 
     section { padding: 72px 0; scroll-margin-top: 88px; }
     h2 { margin: 0 0 10px; font-size: 34px; letter-spacing: -0.03em; }
     .section-lead { margin: 0 0 28px; color: var(--muted); max-width: 640px; }
+    .window-tip {
+      margin: 0 0 22px;
+      padding: 16px 18px;
+      border-radius: 16px;
+      background: rgba(240, 180, 41, 0.12);
+      border: 1px solid rgba(240, 180, 41, 0.5);
+    }
+    .window-tip strong {
+      display: block;
+      font-size: 28px;
+      line-height: 1.3;
+      letter-spacing: -0.02em;
+      color: var(--gold);
+    }
+    .window-tip span {
+      display: block;
+      margin-top: 6px;
+      color: var(--text);
+      font-size: 16px;
+      font-weight: 700;
+    }
 
     .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
     .card {
@@ -366,9 +389,99 @@
 
     footer { padding: 28px 0 40px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); }
 
+    header, main, footer { position: relative; z-index: 1; }
+    .scroll-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 30;
+      height: 2px;
+      width: 0;
+      background: linear-gradient(90deg, var(--blue), var(--purple));
+      pointer-events: none;
+    }
+    .pointer-glow {
+      position: fixed;
+      z-index: 0;
+      top: 0;
+      left: 0;
+      width: 560px;
+      height: 560px;
+      margin: -280px 0 0 -280px;
+      border-radius: 50%;
+      pointer-events: none;
+      opacity: 0;
+      background: radial-gradient(circle, rgba(76, 141, 255, 0.2), rgba(179, 136, 255, 0.07) 42%, transparent 70%);
+      transition: opacity 0.35s ease;
+    }
+    body.moving .pointer-glow { opacity: 1; }
+    header.scrolled {
+      background: rgba(12, 14, 20, 0.92);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+    }
+    .nav-links a { position: relative; transition: color 0.2s ease; }
+    .nav-links a.current { color: var(--text); }
+    .nav-links a.current::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -6px;
+      height: 2px;
+      border-radius: 2px;
+      background: var(--blue);
+    }
+    .hero { perspective: 1200px; }
+    .stage { transition: transform 0.18s ease-out, border-color 0.2s ease; will-change: transform; }
+    .card, .step, .plan, .item, .strip article, .note, .qr, .closing, .pledge {
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .card:hover, .step:hover, .plan:hover, .strip article:hover, .item:hover, .note:hover, .pledge:hover {
+      transform: translateY(-4px);
+      border-color: rgba(126, 176, 255, 0.45);
+    }
+    .qr:hover { transform: translateY(-4px); }
+    @media (prefers-reduced-motion: no-preference) {
+      .hero > div:first-child > * { animation: rise 0.55s ease both; }
+      .hero > div:first-child > *:nth-child(2) { animation-delay: 0.06s; }
+      .hero > div:first-child > *:nth-child(3) { animation-delay: 0.12s; }
+      .hero > div:first-child > *:nth-child(4) { animation-delay: 0.18s; }
+      .stage { animation: stage-in 0.7s ease 0.12s both; }
+      .js .reveal {
+        opacity: 0;
+        transform: translateY(14px);
+        transition: opacity 0.45s ease, transform 0.45s ease;
+      }
+      .js .reveal.in { opacity: 1; transform: none; }
+      .js .card.reveal.in:hover,
+      .js .step.reveal.in:hover,
+      .js .plan.reveal.in:hover,
+      .js .item.reveal.in:hover,
+      .js .strip article.reveal.in:hover,
+      .js .note.reveal.in:hover,
+      .js .pledge.reveal.in:hover,
+      .js .qr.reveal.in:hover,
+      .js .closing.reveal.in:hover {
+        transform: translateY(-4px);
+        transition-delay: 0s;
+      }
+    }
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: none; }
+    }
+    @keyframes stage-in {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @media (hover: none) {
+      .pointer-glow { display: none; }
+    }
+
     @media (max-width: 860px) {
       h1 { font-size: 38px; }
       .pledge p { font-size: 22px; }
+      .window-tip strong { font-size: 22px; }
       .nav { height: auto; padding: 14px 0; flex-wrap: wrap; gap: 10px 16px; }
       .nav-links { flex-wrap: wrap; gap: 12px 16px; }
       .hero, .grid, .steps, .plans, .more, .strip, .pair, .support, .closing { grid-template-columns: 1fr; }
@@ -380,6 +493,8 @@
   </style>
 </head>
 <body>
+  <div class="scroll-bar" aria-hidden="true"></div>
+  <div class="pointer-glow" aria-hidden="true"></div>
   <header>
     <div class="wrap nav">
       <a class="brand" href="#top"><img src="logo.png" alt="" />键影同步</a>
@@ -503,7 +618,7 @@
           <article class="card purple">
             <div class="mark">钓</div>
             <h3>一键钓鱼</h3>
-            <p>只有筛选里包含「飞飞」时才出现。先让角色进入钓鱼界面，再点「一键钓鱼」。当前组已绑定的窗口会持续按方向键下，再点一次停止。</p>
+            <p>这是针对部分游戏做的定制。如果您需要定制特殊游戏场景，可联系客服，进行免费需求定制。</p>
           </article>
         </div>
       </div>
@@ -512,7 +627,8 @@
     <section id="how">
       <div class="wrap">
         <h2>四步开始</h2>
-        <p class="section-lead">第一次打开会有一层引导。请把游戏改成窗口化，不要最小化。</p>
+        <p class="section-lead">第一次打开会有一层引导。</p>
+        <p class="window-tip"><strong>先把游戏改成窗口化</strong><span>推荐使用1024x768像素的窗口。</span></p>
         <div class="steps">
           <article class="step">
             <div class="num">01</div>
@@ -544,7 +660,7 @@
           <article class="step">
             <div class="num">钓鱼</div>
             <h3>一键钓鱼</h3>
-            <p>这是新飞飞专用，只有筛选里包含「飞飞」时才出现。先让角色进入钓鱼界面，再点「一键钓鱼」。会替当前组已绑定的窗口持续按方向键下，再点一次停止。</p>
+            <p>这是针对部分游戏做的定制。如果您需要定制特殊游戏场景，可联系客服，进行免费需求定制。</p>
           </article>
         </div>
       </div>
@@ -590,13 +706,14 @@
       <div class="wrap more">
         <div class="list">
           <div class="item"><div><b>手机号登录</b><span>唯一性和安全性，用手机号注册或登录。勾选记住密码后，下次不用重填。</span></div></div>
-          <div class="item"><div><b>账号只留一处在线</b><span>同一个账号同时只在一处在线。如果在别的地方登录，这边会退出，并提醒你注意账号安全。</span></div></div>
-          <div class="item"><div><b>客服就在程序里</b><span>可以发文字和图片。客服回复后，图标上会出现红点，点开就消失。</span></div></div>
+          <div class="item"><div><b>账号只留一处在线</b><span>同一个账号同时只在一处在线。更注重隐私和安全性。</span></div></div>
+          <div class="item"><div><b>客服</b><span>客服服务时间：8：00-16：30。扫码主动加客服好友。</span></div></div>
           <div class="item"><div><b>窗口可以置顶</b><span>需要时可以让同步器留在最前面，避免被游戏挡住。游戏窗口位置不合适时，可以一键还原。</span></div></div>
         </div>
         <aside class="note">
           <h3>适合窗口化多开</h3>
-          <p>先把游戏改成窗口化，再刷新列表。标题里带游戏名时，用筛选只留下要管理的那些窗口，浏览器和其他程序不会被一起绑进去。</p>
+          <p class="window-tip"><strong>先把游戏改成窗口化</strong><span>推荐使用1024x768像素的窗口。</span></p>
+          <p>再刷新列表。标题里带游戏名时，用筛选只留下要管理的那些窗口，浏览器和其他程序不会被一起绑进去。</p>
           <p style="margin-top:16px">安装之后用手机号注册，即送 2 天 SVIP 试用。想继续用，打开个人中心右上角的「续费升级」，扫码选套餐即可。</p>
         </aside>
       </div>
@@ -620,12 +737,12 @@
             <p>微信扫码付款后，大约 2 分钟内，程序会自己刷新等级和到期时间。</p>
           </details>
           <details>
-            <summary>一键钓鱼为什么有时看不到？</summary>
-            <p>只有筛选框里包含「飞飞」时才会出现。先让角色进入钓鱼界面，再点「一键钓鱼」。</p>
+            <summary>可以定制特殊游戏场景吗？</summary>
+            <p>可以。一键钓鱼就是针对部分游戏做的定制。如果您需要定制特殊游戏场景，可联系客服，进行免费需求定制。</p>
           </details>
           <details>
             <summary>客服什么时候在？</summary>
-            <p>客服服务时间：8：00-16：30。程序里可以发文字和图片。也可以扫下面的二维码，主动加客服好友。</p>
+            <p>客服服务时间：8：00-16：30。扫码主动加客服好友。</p>
           </details>
         </div>
       </div>
@@ -636,7 +753,7 @@
         <div>
           <h2>联系客服</h2>
           <p class="hours">客服服务时间：8：00-16：30</p>
-          <p class="section-lead">可以发文字和图片。客服回复后，图标上会出现红点，点开就消失。也可以扫码主动加客服好友。</p>
+          <p class="section-lead">扫码主动加客服好友。</p>
         </div>
         <figure class="qr">
           <img src="haoyou.png" alt="键影同步客服微信二维码，扫二维码添加好友" width="248" height="360" />
@@ -660,5 +777,98 @@
   <footer>
     <div class="wrap">键影同步 · 多窗口键鼠同步 · 客服服务时间 8：00-16：30</div>
   </footer>
+  <script>
+    (function () {
+      var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      document.documentElement.classList.add("js");
+      var bar = document.querySelector(".scroll-bar");
+      var header = document.querySelector("header");
+      var glow = document.querySelector(".pointer-glow");
+      var stage = document.querySelector(".stage");
+
+      function onScroll() {
+        var max = document.documentElement.scrollHeight - window.innerHeight;
+        var progress = max > 0 ? window.scrollY / max : 0;
+        if (bar) bar.style.width = (progress * 100) + "%";
+        if (header) header.classList.toggle("scrolled", window.scrollY > 8);
+      }
+      onScroll();
+      window.addEventListener("scroll", onScroll, { passive: true });
+
+      var links = Array.prototype.slice.call(document.querySelectorAll('.nav-links a[href^="#"]'));
+      var sections = links.map(function (link) {
+        return document.querySelector(link.getAttribute("href"));
+      }).filter(Boolean);
+      if ("IntersectionObserver" in window && sections.length) {
+        var spy = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            var id = "#" + entry.target.id;
+            links.forEach(function (link) {
+              link.classList.toggle("current", link.getAttribute("href") === id);
+            });
+          });
+        }, { rootMargin: "-45% 0px -45% 0px" });
+        sections.forEach(function (section) { spy.observe(section); });
+      }
+
+      if (reduce) return;
+
+      var groups = [".grid", ".steps", ".plans", ".pair", ".strip", ".list", ".faq"];
+      groups.forEach(function (selector) {
+        document.querySelectorAll(selector).forEach(function (group) {
+          var children = group.querySelectorAll(":scope > .card, :scope > .step, :scope > .plan, :scope > article, :scope > .item, :scope > details");
+          children.forEach(function (child, index) {
+            child.classList.add("reveal");
+            child.style.transitionDelay = Math.min(index, 7) * 0.06 + "s";
+          });
+        });
+      });
+      document.querySelectorAll(".pledge, .note, .qr, .closing").forEach(function (el) {
+        el.classList.add("reveal");
+      });
+
+      if (!("IntersectionObserver" in window)) {
+        document.querySelectorAll(".reveal").forEach(function (el) { el.classList.add("in"); });
+        return;
+      }
+      var seen = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("in");
+          entry.target.addEventListener("transitionend", function () {
+            entry.target.style.transitionDelay = "";
+          }, { once: true });
+          seen.unobserve(entry.target);
+        });
+      }, { threshold: 0.16, rootMargin: "0px 0px -8% 0px" });
+      document.querySelectorAll(".reveal").forEach(function (el) { seen.observe(el); });
+
+      var mx = 0, my = 0, gx = 0, gy = 0, frame = 0;
+      function follow() {
+        frame = 0;
+        gx += (mx - gx) * 0.18;
+        gy += (my - gy) * 0.18;
+        if (glow) glow.style.transform = "translate3d(" + gx + "px," + gy + "px,0)";
+        if (Math.abs(mx - gx) > 0.6 || Math.abs(my - gy) > 0.6) frame = requestAnimationFrame(follow);
+      }
+      window.addEventListener("pointermove", function (event) {
+        mx = event.clientX;
+        my = event.clientY;
+        document.body.classList.add("moving");
+        if (!frame) frame = requestAnimationFrame(follow);
+        if (!stage) return;
+        var rect = stage.getBoundingClientRect();
+        var inside = event.clientX >= rect.left && event.clientX <= rect.right && event.clientY >= rect.top && event.clientY <= rect.bottom;
+        if (!inside) {
+          stage.style.transform = "";
+          return;
+        }
+        var px = (event.clientX - rect.left) / rect.width - 0.5;
+        var py = (event.clientY - rect.top) / rect.height - 0.5;
+        stage.style.transform = "rotateX(" + (-py * 6).toFixed(2) + "deg) rotateY(" + (px * 8).toFixed(2) + "deg)";
+      });
+    })();
+  </script>
 </body>
 </html>
