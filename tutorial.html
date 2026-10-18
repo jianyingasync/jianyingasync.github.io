@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>键影同步 · 完整使用教程</title>
+  <style>
+    :root {
+      --bg: #0c0e14;
+      --card: #151925;
+      --line: rgba(255,255,255,.08);
+      --text: #f4f6fb;
+      --muted: #9aa3b8;
+      --blue: #4c8dff;
+      --green: #2fce8b;
+      --gold: #f0b429;
+      --purple: #b388ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: "Microsoft YaHei UI", "PingFang SC", sans-serif;
+      background:
+        radial-gradient(800px 420px at 90% -10%, rgba(76,141,255,.22), transparent 55%),
+        var(--bg);
+      line-height: 1.7;
+    }
+    .wrap { width: min(920px, calc(100% - 36px)); margin: 0 auto; padding: 48px 0 80px; }
+    h1 { font-size: 36px; line-height: 1.2; margin: 0 0 12px; letter-spacing: -.02em; }
+    h2 { font-size: 24px; margin: 42px 0 14px; padding-top: 18px; border-top: 1px solid var(--line); }
+    h3 { font-size: 17px; margin: 22px 0 8px; color: #d7dce8; }
+    p, li { color: var(--muted); }
+    .lead { font-size: 17px; margin: 0 0 28px; max-width: 720px; }
+    .meta { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 28px; }
+    .chip {
+      padding: 6px 12px; border-radius: 999px; font-size: 13px;
+      background: rgba(76,141,255,.12); color: #9ec0ff;
+      border: 1px solid rgba(76,141,255,.25);
+    }
+    .shot {
+      margin: 16px 0 8px; border: 1px solid var(--line); border-radius: 14px;
+      overflow: hidden; background: #0a0c12;
+    }
+    .shot.narrow { max-width: 440px; }
+    .shot img { width: 100%; display: block; }
+    .cap { font-size: 13px; color: #7f889c; margin: 0 0 18px; }
+    ol.flow { padding-left: 22px; }
+    ol.flow li { margin: 8px 0; }
+    ul.plain { padding-left: 22px; }
+    ul.plain li { margin: 6px 0; }
+    .warn, .tip {
+      border-radius: 12px; padding: 14px 16px; margin: 16px 0;
+      border: 1px solid var(--line);
+    }
+    .warn { background: rgba(240,180,41,.08); border-color: rgba(240,180,41,.28); }
+    .warn strong { color: var(--gold); }
+    .tip { background: rgba(76,141,255,.08); border-color: rgba(76,141,255,.25); }
+    .tip strong { color: #9ec0ff; }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0 8px; font-size: 14px; }
+    th, td { border: 1px solid var(--line); padding: 10px 12px; text-align: left; }
+    th { background: #121621; color: #d7dce8; }
+    td { color: var(--muted); }
+    a { color: #9ec0ff; }
+    .toc {
+      background: var(--card); border: 1px solid var(--line);
+      border-radius: 14px; padding: 18px 22px;
+    }
+    .toc a { color: var(--muted); }
+    .toc ol { margin: 8px 0 0; padding-left: 20px; }
+    .toc li { margin: 6px 0; }
+    code {
+      font-family: Consolas, monospace; font-size: 13px;
+      background: #1a2030; padding: 1px 6px; border-radius: 6px; color: #d7dce8;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 18px; border-radius: 10px; background: var(--blue);
+      color: #fff; font-weight: 700; margin: 8px 8px 8px 0;
+    }
+    footer { margin-top: 48px; color: #667085; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p style="margin:0 0 18px"><a href="index.html">← 返回首页</a></p>
+    <h1>键影同步 · 完整使用教程</h1>
+    <p class="lead">从下载安装，到绑定窗口、开始同步、一键跟随和联系客服，按下面步骤做即可。配图均来自同步器真实界面截取并标注。</p>
+    <div class="meta">
+      <span class="chip">Windows 同步器</span>
+      <span class="chip">手机号登录</span>
+      <span class="chip">推荐窗口化 1024×768</span>
+      <span class="chip">非外挂，不改游戏内存</span>
+    </div>
+    <p>
+      <a class="btn" href="http://180.184.168.232:18888/download/KeyMirrorSetup.exe">下载安装包 KeyMirrorSetup.exe</a>
+      <a class="btn" href="https://jianyingasync.github.io/" style="background:#262a38">打开官网</a>
+    </p>
+
+    <div class="toc">
+      <strong style="color:#f4f6fb">目录</strong>
+      <ol>
+        <li><a href="#download">下载与安装</a></li>
+        <li><a href="#login">注册 / 登录</a></li>
+        <li><a href="#prepare">游戏准备</a></li>
+        <li><a href="#main">认识主界面</a></li>
+        <li><a href="#bind">筛选、排序与绑定</a></li>
+        <li><a href="#sync">开始同步</a></li>
+        <li><a href="#follow">一键跟随 / 一键钓鱼</a></li>
+        <li><a href="#ops">日常操作小技巧</a></li>
+        <li><a href="#profile">个人中心与客服</a></li>
+        <li><a href="#levels">会员等级说明</a></li>
+        <li><a href="#faq">常见问题</a></li>
+      </ol>
+    </div>
+
+    <h2 id="download">1. 下载与安装</h2>
+    <ol class="flow">
+      <li>点击下载：<a href="http://180.184.168.232:18888/download/KeyMirrorSetup.exe">http://180.184.168.232:18888/download/KeyMirrorSetup.exe</a></li>
+      <li>运行 <code>KeyMirrorSetup.exe</code>，按向导安装。默认装到当前用户目录，一般不需要管理员权限。</li>
+      <li>安装完成后，从桌面「键影同步」快捷方式启动。</li>
+    </ol>
+    <div class="tip"><strong>提示：</strong>安装包自带线上接口配置，登录请求的是服务器，不是本机。若已装过旧版，直接覆盖安装后再打开即可。</div>
+
+    <h2 id="login">2. 注册 / 登录</h2>
+    <div class="shot narrow"><img src="tutorial/01-login.png" alt="登录界面标注" /></div>
+    <p class="cap">图 1：登录窗口（蓝色序号对应操作说明）。</p>
+    <ol class="flow">
+      <li><strong>手机号：</strong>输入本人手机号。没有账号时，点右下角「没有账号？注册」。</li>
+      <li><strong>密码：</strong>输入密码。可勾选「记住密码」，下次自动填好。</li>
+      <li><strong>用户协议：</strong>必须勾选「已同意《键影同步用户协议》」才能继续。点蓝色协议名可查看全文。</li>
+      <li><strong>验证码：</strong>输入右侧图形验证码；点验证码图片可刷新。</li>
+      <li>点蓝色「登录」或注册页的「注册」按钮。</li>
+    </ol>
+    <div class="warn"><strong>注意：</strong>同一个账号同时只允许一处在线。在别处登录时，这边会退出，请注意账号安全。</div>
+    <p>新注册用户会开通约两日试用（能力以个人中心显示为准）。试用结束后仍可登录为普通会员，方便打开个人中心了解续费。</p>
+
+    <h2 id="prepare">3. 游戏准备（很重要）</h2>
+    <div class="warn">
+      <strong>先把游戏改成窗口化。</strong>推荐使用 <strong>1024×768</strong> 像素的窗口。不要最小化，也不要用全屏独占。
+    </div>
+    <ol class="flow">
+      <li>先打开要同步的多个游戏客户端（例如 2～5 个）。</li>
+      <li>每个窗口都调成窗口化，分辨率尽量一致。</li>
+      <li>再打开键影同步。同步器<strong>不会缩放游戏窗口</strong>：左侧操作区跟着当前游戏客户区的原像素大小变化，能放进去就把游戏窗口贴到左侧。</li>
+    </ol>
+
+    <h2 id="main">4. 认识主界面</h2>
+    <div class="shot"><img src="tutorial/02-main.png" alt="主界面标注" /></div>
+    <p class="cap">图 2：主界面总览。</p>
+    <table>
+      <tr><th>序号</th><th>区域</th><th>作用</th></tr>
+      <tr><td>1</td><td>刷新 / 筛选 / 自动绑定</td><td>刷新窗口列表，按游戏名过滤，一键按顺序绑定槽位</td></tr>
+      <tr><td>2</td><td>开始同步</td><td>打开或停止键鼠同步</td></tr>
+      <tr><td>3</td><td>一键跟随 / 一键钓鱼</td><td>跟随队长、新飞飞钓鱼等快捷操作</td></tr>
+      <tr><td>4</td><td>个人中心 / 客服</td><td>查看会员、改密码；和客服发消息（有回复时有红点）</td></tr>
+      <tr><td>5</td><td>左侧操作区</td><td>当前槽位画面。可在此点击、按键；上方有「还原位置」</td></tr>
+      <tr><td>6</td><td>右侧槽位列</td><td>本组 1～5 号预览；SVIP 可切换第一组 / 第二组</td></tr>
+      <tr><td>7</td><td>下方窗口池</td><td>可拖拽排序、双击绑定、改备注</td></tr>
+    </table>
+
+    <h2 id="bind">5. 筛选、排序与绑定</h2>
+    <h3>5.1 工具栏：刷新、筛选、自动绑定</h3>
+    <div class="shot"><img src="tutorial/03-toolbar.png" alt="工具栏标注" /></div>
+    <p class="cap">图 3：顶部工具栏局部。</p>
+    <ol class="flow">
+      <li>点「刷新列表」。同步器会枚举当前可见窗口；筛选里若含「飞飞」，还会尝试识别角色名（窗口可能短暂闪一下）。</li>
+      <li>在「筛选」框输入游戏名关键字（例如「新飞飞」），只显示匹配的窗口。</li>
+      <li>窗口排好序后，点「自动绑定」，按窗口池顺序填入当前组槽位。</li>
+    </ol>
+
+    <h3>5.2 窗口池：拖拽排序</h3>
+    <div class="shot"><img src="tutorial/05-pool.png" alt="窗口池标注" /></div>
+    <p class="cap">图 4：下方窗口池。</p>
+    <ol class="flow">
+      <li>按住卡片拖拽，调整从左到右、从上到下的顺序。</li>
+      <li>自动绑定会按这个顺序依次放入槽位 1、2、3…</li>
+      <li>也可先点右侧某个空槽位，再双击窗口池卡片，手动绑到该槽位。</li>
+      <li>可为窗口添加备注，方便辨认角色。</li>
+    </ol>
+
+    <h3>5.3 右侧槽位</h3>
+    <div class="shot narrow"><img src="tutorial/04-slots.png" alt="槽位列标注" /></div>
+    <p class="cap">图 5：本组槽位预览。</p>
+    <ol class="flow">
+      <li>单击某个槽位，左侧切换为该窗口的操作区。</li>
+      <li>SVIP 可在「第一组 / 第二组」之间切换，两组分别绑定。</li>
+      <li>「清空本组」会解除当前组绑定，并把窗口放回绑定前记录的位置。</li>
+    </ol>
+    <div class="tip"><strong>槽位 1</strong> 一般当作队长 / 主号。一键跟随时不会点槽位 1，而是让槽位 2～5 去跟队长。</div>
+
+    <h2 id="sync">6. 开始同步</h2>
+    <ol class="flow">
+      <li>至少绑定 <strong>2 个</strong> 窗口（普通会员只有预览，不能多开同步）。</li>
+      <li>确认勾选了「同步键盘」和 / 或「同步鼠标按键」。</li>
+      <li>点绿色「开始同步」，按钮会变成「停止同步」，状态显示「同步中」。</li>
+      <li>到<strong>任意一个已绑定的游戏窗口</strong>里操作，其余窗口会跟着做同样的键鼠动作。</li>
+      <li>也可以点左侧槽位画面，在同步器里直接操作当前槽位。</li>
+      <li>不需要时再点「停止同步」。</li>
+    </ol>
+    <div class="tip">
+      <strong>快捷键：</strong>同步器或已绑定游戏在前台时，可用 <code>Ctrl+Shift+F8</code> 开关同步；数字键 <code>1</code>～<code>5</code> 快速切换槽位。
+    </div>
+    <div class="warn"><strong>还原位置：</strong>窗口位置乱了时，点左侧上方「还原位置」，游戏窗口会回到绑定前记录的位置。</div>
+
+    <h2 id="follow">7. 一键跟随 / 一键钓鱼</h2>
+    <h3>7.1 一键跟随</h3>
+    <ol class="flow">
+      <li>先点「开始同步」。</li>
+      <li>第一次点「一键跟随」时，按提示按下游戏里的跟随键（例如 F4 / F5），同步器会记住，按钮上会显示键名。</li>
+      <li>之后再点，会让当前组槽位 2～5 依次点中队伍列表第 4 个头像（队长位），并按下跟随键。</li>
+      <li>右键「一键跟随」可清除已记录的跟随键，下次重新设置。</li>
+    </ol>
+    <h3>7.2 一键钓鱼（新飞飞）</h3>
+    <ol class="flow">
+      <li>仅当筛选内容包含「飞飞」时，工具栏才会出现「一键钓鱼」。</li>
+      <li>先让各角色进入钓鱼界面 →「开始同步」→「一键钓鱼」。</li>
+      <li>会对当前组已绑定窗口持续发送方向键「下」；再点一次停止。</li>
+    </ol>
+    <p>这是针对部分游戏的定制能力。若需要其他场景，可联系客服说明需求，可免费沟通定制。</p>
+
+    <h2 id="ops">8. 日常操作小技巧</h2>
+    <ul class="plain">
+      <li><strong>窗口置顶：</strong>勾选后同步器留在最前面，避免被游戏挡住。</li>
+      <li><strong>左侧画面：</strong>按当前游戏客户区原像素显示，不把游戏强行缩放。放得下就贴进左侧；放不下请把游戏改成推荐分辨率后再绑。</li>
+      <li><strong>管理员运行：</strong>若游戏是管理员权限启动、同步器不是，可能导致按键送不进去。可用工具栏「管理员运行」。</li>
+      <li><strong>组切换：</strong>SVIP 两组各五个窗口；切换组后，绑定与同步针对当前组。</li>
+    </ul>
+
+    <h2 id="profile">9. 个人中心与客服</h2>
+    <div class="shot narrow"><img src="tutorial/06-profile.png" alt="个人中心标注" /></div>
+    <p class="cap">图 6：个人中心。</p>
+    <ol class="flow">
+      <li>点右上角头像或会员标签，打开个人中心。</li>
+      <li>可查看当前等级、开始时间、有效期、可开窗口数；需要时点「续费升级」。</li>
+      <li>底部可「退出登录」「意见反馈」「修改密码」。</li>
+      <li>点客服图标打开会话。客服回复后图标会出现红点，点开后消失。</li>
+      <li>客服服务时间：<strong>8：00－16：30</strong>。也可扫码主动加客服好友。</li>
+    </ol>
+
+    <h2 id="levels">10. 会员等级说明</h2>
+    <table>
+      <tr><th>等级</th><th>窗口能力</th><th>说明</th></tr>
+      <tr><td>普通</td><td>1 个预览</td><td>可登录查看；不能多开同步</td></tr>
+      <tr><td>VIP</td><td>一组五开</td><td>5 个槽位，1 组</td></tr>
+      <tr><td>SVIP</td><td>两组十开</td><td>每组 5 个，共 2 组</td></tr>
+      <tr><td>管理员</td><td>两组十开</td><td>后台管理账号</td></tr>
+    </table>
+    <p>注册试用一般为短期 SVIP 能力；到期未续费会变为普通。付费会员过期后登录可能被限制，请联系客服或管理员续费。</p>
+
+    <h2 id="faq">11. 常见问题</h2>
+    <h3>左侧点不准？</h3>
+    <p>请确认游戏是窗口化，且分辨率正常。当前版本左侧按游戏原像素贴入，不缩放游戏。若窗口以前被拉变形，先点「还原位置」，或在游戏里重新设成 1024×768 再绑定。</p>
+    <h3>看不到窗口 / 绑定不上？</h3>
+    <p>检查筛选关键字是否过窄；窗口是否最小化；刷新列表后再试。</p>
+    <h3>开始同步提示不能同步？</h3>
+    <p>普通会员不能多开同步。请确认至少绑定两个窗口，并勾选键盘或鼠标同步；VIP / SVIP 才可多开。</p>
+    <h3>一键跟随没点到？</h3>
+    <p>保持槽位 2～5 窗口化且可见；槽位 1 是队长不会被点。确保队伍界面开着，且已开始同步。</p>
+    <h3>杀毒软件拦截？</h3>
+    <p>同步器需要枚举窗口并发送键鼠消息，部分安全软件会误报。请从官网地址下载，并加入信任后安装。</p>
+    <h3>可以定制特殊游戏场景吗？</h3>
+    <p>可以。联系客服说明需求，可免费沟通定制。</p>
+
+    <footer>
+      下载安装包：<a href="http://180.184.168.232:18888/download/KeyMirrorSetup.exe">KeyMirrorSetup.exe</a><br />
+      官网：<a href="https://jianyingasync.github.io/">jianyingasync.github.io</a><br />
+      <a href="index.html">返回首页</a>
+    </footer>
+  </div>
+</body>
+</html>
